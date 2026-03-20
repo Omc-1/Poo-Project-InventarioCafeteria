@@ -9,7 +9,7 @@ from insumos import Insumos
 
 
 def clear_screen():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def pedir_fecha_caducidad() -> str | None:
@@ -54,7 +54,7 @@ def display():
                 fecha = pedir_fecha_caducidad()
                 cafe_inv.append(Cacao(brand, model, kilos, fecha))
             elif option == "3":
-                deslac = input("¿Es deslactosada? (si/no): ").lower() == 'si'
+                deslac = input("¿Es deslactosada? (si/no): ").lower() == "si"
                 litros = float(input("Litros almacenados: "))
                 fecha = pedir_fecha_caducidad()
                 cafe_inv.append(Lacteos(brand, model, deslac, litros, fecha))

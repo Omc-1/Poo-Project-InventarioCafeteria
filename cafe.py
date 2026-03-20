@@ -23,7 +23,7 @@ class Cafe(Insumos):
     @property
     def peso_por_costal_kg(self) -> float:
         return self.__peso_por_costal_kg
-    
+
     @property
     def fecha_caducidad(self) -> str | None:
         return self.__fecha_caducidad
@@ -41,11 +41,12 @@ class Cafe(Insumos):
 
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
-        data.update({
-            "type": "Cafe",
-            "num_bags": self.__num_bags,
-            "peso_por_costal_kg": self.__peso_por_costal_kg,
-            "fecha_caducidad": self.__fecha_caducidad,
-        })
+        data.update(
+            {
+                "type": "Cafe",
+                "num_bags": self.__num_bags,
+                "peso_por_costal_kg": self.__peso_por_costal_kg,
+                "fecha_caducidad": self.__fecha_caducidad,
+            }
+        )
         return data
-

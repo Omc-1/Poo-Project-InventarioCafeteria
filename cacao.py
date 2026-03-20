@@ -1,6 +1,7 @@
 from typing import Dict, Any
 from insumos import Insumos
 
+
 class Cacao(Insumos):
     def __init__(
         self,
@@ -23,9 +24,11 @@ class Cacao(Insumos):
 
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
-        data.update({
-            "type": "Cacao",
-            "total_kilos": self.__total_kilos,
-            "fecha_caducidad": self.__fecha_caducidad,
-        })
+        data.update(
+            {
+                "type": "Cacao",
+                "total_kilos": self.__total_kilos,
+                "fecha_caducidad": self.__fecha_caducidad,
+            }
+        )
         return data

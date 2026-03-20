@@ -1,6 +1,7 @@
 from typing import Dict, Any
 from insumos import Insumos
 
+
 class Lacteos(Insumos):
     """Clase hija lacteos"""
 
@@ -32,12 +33,14 @@ class Lacteos(Insumos):
 
     def to_dict(self) -> Dict[str, Any]:
         data = super().to_dict()
-        data.update({
-            "type": "Lacteos",
-            "es_deslact": self.__es_deslact,
-            "litros": self.__litros,
-            "fecha_caducidad": self.__fecha_caducidad,
-        })
+        data.update(
+            {
+                "type": "Lacteos",
+                "es_deslact": self.__es_deslact,
+                "litros": self.__litros,
+                "fecha_caducidad": self.__fecha_caducidad,
+            }
+        )
         return data
 
 

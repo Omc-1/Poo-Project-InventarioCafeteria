@@ -21,7 +21,4 @@ class Insumos(ISerializable):
         pass
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
-            "brand": self.__brand,
-            "model": self.__model
-        }
+        return {"brand": self.__brand, "model": self.__model}
