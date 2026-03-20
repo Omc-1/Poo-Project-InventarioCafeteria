@@ -1,1 +1,42 @@
 
+name: CI de Inventario Cafeteria
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configurar Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest mypy black
+
+    - name: Revisar estilo de código (Black)
+      run: |
+        black --check .
+
+    - name: Analizar con Flake8 (Errores de sintaxis)
+      run: |
+        # Detener si hay errores de lógica o variables no definidas
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+    - name: Revisar Tipado Estático (Mypy)
+      run: |
+        mypy . --ignore-missing-imports
+
+    - name: Ejecutar Pruebas Unitarias (Pytest)
+      run: |
+        pytest
