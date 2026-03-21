@@ -1,81 +1,70 @@
 import json
 import os
-from datetime import datetime
-from typing import List
 from insumos import Insumos
 from cafe import Cafe
 from cacao import Cacao
 from lacteos import Lacteos
 
-
-def normalizar_fecha_caducidad(raw: str | None) -> str | None:
-    if not raw:
-        return None
-
-    # Formato nuevo esperado: DD-MM-YYYY
-    try:
-        datetime.strptime(raw, "%d-%m-%Y")
-        return raw
-    except ValueError:
-        pass
-
-    # Compatibilidad con formato antiguo: YYYY-MM-DD
-    try:
-        dt = datetime.strptime(raw, "%Y-%m-%d")
-        return dt.strftime("%d-%m-%Y")
-    except ValueError:
-        return raw
-
-
 class CafeManager:
-    def __init__(self, filename: str) -> None:
-        self.filename = filename
+    def __init__(self, file_path: str = "inventario_cafe.json"):
+        self.file_path = file_path
 
-    def save_cafe(self, cafe: List[Insumos]) -> None:
-        try:
-            # Se usa el método to_dict de cada objeto en la lista
-            data = [insumo.to_dict() for insumo in cafe]
-            with open(self.filename, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4)
-                print(f"✅ Datos guardados en {self.filename}")
-        except IOError as e:
-            print(f"❌ Error al guardar: {e}")
+    def save_data(self, cafe_list: list[Insumos]) -> None:
+        data = []
+        for cafe in cafe_list:
+            # Diccionario base con atributos comunes
+            item = {
+                "brand": cafe.brand,
+                "model": cafe.model,
+                "type": cafe.__class__.__name__,
+                "bags": cafe.bags
+            }
+            # Atributos específicos por clase
+            if isinstance(cafe, Cafe):
+                item["kilos_per_bag"] = cafe.kilos_per_bag
+            elif isinstance(cafe, Cacao):
+                item["kilos_per_bag"] = cafe.kilos_per_bag
+            elif isinstance(cafe, Lacteos):
+                item["liters_per_bag"] = cafe.liters_per_bag
+            
+            data.append(item)
 
-    def load_cafe(self) -> List[Insumos]:
-        if not os.path.exists(self.filename):
+        with open(self.file_path, "w") as f:
+            json.dump(data, f, indent=4)
+
+    def load_data(self) -> list[Insumos]:
+        if not os.path.exists(self.file_path):
             return []
 
-        cafe_list = []
-        try:
-            with open(self.filename, "r", encoding="utf-8") as f:
-                data_list = json.load(f)
-                for item in data_list:
-                    if item["type"] == "Cafe":
-                        obj = Cafe(
-                            item["brand"],
-                            item["model"],
-                            item["num_bags"],
-                            item.get("peso_por_costal_kg", 0.0),
-                            normalizar_fecha_caducidad(item.get("fecha_caducidad")),
-                        )
-                    elif item["type"] == "Cacao":
-                        obj = Cacao(
-                            item["brand"],
-                            item["model"],
-                            item["total_kilos"],
-                            normalizar_fecha_caducidad(item.get("fecha_caducidad")),
-                        )
-                    elif item["type"] == "Lacteos":
-                        obj = Lacteos(
-                            item["brand"],
-                            item["model"],
-                            item["es_deslact"],
-                            item.get("litros", 0.0),
-                            normalizar_fecha_caducidad(item.get("fecha_caducidad")),
-                        )
-                    else:
-                        continue
-                    cafe_list.append(obj)
-            return cafe_list
-        except (json.JSONDecodeError, KeyError):
-            return []
+        with open(self.file_path, "r") as f:
+            data = json.load(f)
+
+        # CORRECCIÓN CLAVE: Anotar la lista como list[Insumos] 
+        # para que acepte cualquier subclase sin errores de invarianza.
+        cafe_list: list[Insumos] = []
+        
+        for item in data:
+            brand = item["brand"]
+            model = item["model"]
+            type_name = item["type"]
+            bags = item["bags"]
+
+            # CORRECCIÓN CLAVE: Usar el tipo 'Insumos' para la variable temporal
+            # Esto permite el polimorfismo que Mypy estaba bloqueando.
+            producto: Insumos
+
+            if type_name == "Cafe":
+                kilos_per_bag = item["kilos_per_bag"]
+                producto = Cafe(brand, model, type_name, bags, kilos_per_bag)
+            elif type_name == "Cacao":
+                kilos_per_bag = item["kilos_per_bag"]
+                producto = Cacao(brand, model, type_name, bags, kilos_per_bag)
+            elif type_name == "Lacteos":
+                liters_per_bag = item["liters_per_bag"]
+                producto = Lacteos(brand, model, type_name, bags, liters_per_bag)
+            else:
+                continue
+                
+            cafe_list.append(producto)
+
+        return cafe_list
