@@ -1,7 +1,7 @@
 
 [project]
 name = "POO-semana3-actividad"
-version = "1.0.0" # Release Please actualizará este número automáticamente
+version = "0.1.0" # Release Please actualizará este número automáticamente
 description = "Proyecto de la clase de POO"
 requires-python = ">=3.10"
 
