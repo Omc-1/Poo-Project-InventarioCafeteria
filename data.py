@@ -35,7 +35,7 @@ class CafeManager:
         try:
             # Se usa el método to_dict de cada objeto en la lista
             data = [insumo.to_dict() for insumo in cafe]
-            with open(self.filename, 'w', encoding='utf-8') as f:
+            with open(self.filename, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4)
                 print(f"✅ Datos guardados en {self.filename}")
         except IOError as e:
@@ -47,7 +47,7 @@ class CafeManager:
 
         cafe_list = []
         try:
-            with open(self.filename, 'r', encoding='utf-8') as f:
+            with open(self.filename, "r", encoding="utf-8") as f:
                 data_list = json.load(f)
                 for item in data_list:
                     if item["type"] == "Cafe":
